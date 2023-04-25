@@ -76,15 +76,18 @@ class Game:
     is_player_turn = True       # Is true when it is the player's turn.
     is_active = True            # Is false when game is over.
     game_over_screen = {}       # The game over screen.
+    gui = {}                    # The GUI elements.
 
     def __init__(self):
         """Initializes the game.
         """
         pygame.init()
-        self.window = pygame.display.set_mode((200, 200))
+        self.gui['window'] = pygame.display.set_mode((200, 200))
+
         pygame.display.set_caption('Tic Tac Toe')
-        self.background = pygame.image.load('assets/board.png')
-        self.font = pygame.font.Font(None, 64)
+
+        self.gui['background'] = pygame.image.load('assets/board.png')
+        self.gui['font'] = pygame.font.Font(None, 64)
 
         self.define_spaces()
 
@@ -94,7 +97,7 @@ class Game:
         :param winner: The winner of the game.
         """
         # Create necessary surfaces.
-        self.game_over_screen = {
+        self.gui['game_over_screen'] = {
             'background': pygame.Surface((200, 200)),
             'winner_message': pygame.Surface((200, 50)),
             'button_border': pygame.Surface((101, 51)),
@@ -102,35 +105,35 @@ class Game:
         }
 
         # Fill the background with white.
-        self.game_over_screen['background'].fill((255, 255, 255))
+        self.gui['game_over_screen']['background'].fill((255, 255, 255))
 
         # Fill the winner message with white.
-        self.game_over_screen['winner_message'].fill((255, 255, 255))
+        self.gui['game_over_screen']['winner_message'].fill((255, 255, 255))
 
         # Fill the button border with black.
-        self.game_over_screen['button_border'].fill((0, 0, 0))
+        self.gui['game_over_screen']['button_border'].fill((0, 0, 0))
 
         # Fill the button with white.
-        self.game_over_screen['button'].fill((255, 255, 255))
+        self.gui['game_over_screen']['button'].fill((255, 255, 255))
 
         # Add the text for the winner.
         if not winner:
-            self.game_over_screen['winner_message'].blit(self.font.render("Tie!", True, (0, 0, 0)), (60, 0))
+            self.gui['game_over_screen']['winner_message'].blit(self.gui['font'].render("Tie!", True, (0, 0, 0)), (60, 0))
         else:
-            self.game_over_screen['winner_message'].blit(self.font.render(winner + " wins!", True, (0, 0, 0)), (20, 0))
-        self.game_over_screen['background'].blit(self.game_over_screen['winner_message'], (0, 20))
+            self.gui['game_over_screen']['winner_message'].blit(self.gui['font'].render(winner + " wins!", True, (0, 0, 0)), (20, 0))
+        self.gui['game_over_screen']['background'].blit(self.gui['game_over_screen']['winner_message'], (0, 20))
 
         # Add the text for the play button.
-        self.game_over_screen['button'].blit(self.font.render("Play", True, (0, 0, 0)), (4, 2))
+        self.gui['game_over_screen']['button'].blit(self.gui['font'].render("Play", True, (0, 0, 0)), (4, 2))
 
         # Add the button to the button border.
-        self.game_over_screen['button_border'].blit(self.game_over_screen['button'], (0, 0))
+        self.gui['game_over_screen']['button_border'].blit(self.gui['game_over_screen']['button'], (0, 0))
 
         # Add the button border to the background.
-        self.game_over_screen['background'].blit(self.game_over_screen['button_border'], (50, 100))
+        self.gui['game_over_screen']['background'].blit(self.gui['game_over_screen']['button_border'], (50, 100))
 
         # Add the background to the window.
-        self.window.blit(self.game_over_screen['background'], (0, 0))
+        self.gui['window'].blit(self.gui['game_over_screen']['background'], (0, 0))
 
         # Update the display.
         pygame.display.flip()
@@ -148,12 +151,12 @@ class Game:
             self.make_computer_turn()
             self.is_player_turn = True
 
-        self.window.blit(self.background, (0, 0))
+        self.gui['window'].blit(self.gui['background'], (0, 0))
         for space in self.board:
             if self.board[space]['value'] is not None:
-                self.board[space]['surface'] = self.font.render(self.board[space]['value'], True, (0, 0, 0))
+                self.board[space]['surface'] = self.gui['font'].render(self.board[space]['value'], True, (0, 0, 0))
 
-                self.window.blit(self.board[space]['surface'], self.board[space]['rect'].move(19, 12))
+                self.gui['window'].blit(self.board[space]['surface'], self.board[space]['rect'].move(19, 12))
 
         if not self.is_active:
             self.create_game_over_screen(self.check_for_winner())
@@ -179,7 +182,7 @@ class Game:
         if not self.is_player_turn:
             print("Not your turn.")
         elif not self.is_active:
-            if self.game_over_screen['button'].get_rect().move(50, 100).collidepoint(pos):
+            if self.gui['game_over_screen']['button'].get_rect().move(50, 100).collidepoint(pos):
                 self.reset_game()
             else:
                 print("Game is not active.")
