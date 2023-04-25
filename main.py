@@ -61,6 +61,7 @@ class Game:
         }
     }
 
+    # The lines that need to be checked for a win.
     winning_lines = {
         1: [1, 2, 3],
         2: [4, 5, 6],
@@ -74,8 +75,7 @@ class Game:
 
     is_player_turn = True       # Is true when it is the player's turn.
     is_active = True            # Is false when game is over.
-    game_over_screen = None     # The game over screen.
-    game_over_button = None     # The game over button.
+    game_over_screen = {}       # The game over screen.
 
     def __init__(self):
         """Initializes the game.
@@ -96,27 +96,31 @@ class Game:
         # Create necessary surfaces.
         self.game_over_screen = {
             'background': pygame.Surface((200, 200)),
+            'winner_message': pygame.Surface((200, 50)),
             'button_border': pygame.Surface((101, 51)),
             'button': pygame.Surface((100, 50))
         }
 
         # Fill the background with white.
         self.game_over_screen['background'].fill((255, 255, 255))
-        self.game_over_screen['background'].set_alpha(200)
+
+        # Fill the winner message with white.
+        self.game_over_screen['winner_message'].fill((255, 255, 255))
 
         # Fill the button border with black.
         self.game_over_screen['button_border'].fill((0, 0, 0))
-        self.game_over_screen['button_border'].set_alpha(200)
 
         # Fill the button with white.
         self.game_over_screen['button'].fill((255, 255, 255))
-        self.game_over_screen['button'].set_alpha(200)
 
-        # Add the text for the winner and the play button.
+        # Add the text for the winner.
         if not winner:
-            self.game_over_screen['background'].blit(self.font.render("Tie!", True, (0, 0, 0)), (60, 20))
+            self.game_over_screen['winner_message'].blit(self.font.render("Tie!", True, (0, 0, 0)), (60, 0))
         else:
-            self.game_over_screen['background'].blit(self.font.render(winner + " wins!", True, (0, 0, 0)), (20, 20))
+            self.game_over_screen['winner_message'].blit(self.font.render(winner + " wins!", True, (0, 0, 0)), (20, 0))
+        self.game_over_screen['background'].blit(self.game_over_screen['winner_message'], (0, 20))
+
+        # Add the text for the play button.
         self.game_over_screen['button'].blit(self.font.render("Play", True, (0, 0, 0)), (4, 2))
 
         # Add the button to the button border.
