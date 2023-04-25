@@ -61,6 +61,17 @@ class Game:
         }
     }
 
+    winning_lines = {
+        1: [1, 2, 3],
+        2: [4, 5, 6],
+        3: [7, 8, 9],
+        4: [1, 4, 7],
+        5: [2, 5, 8],
+        6: [3, 6, 9],
+        7: [1, 5, 9],
+        8: [3, 5, 7]
+    }
+
     is_player_turn = True
 
     def __init__(self):
@@ -82,6 +93,10 @@ class Game:
     def on_update(self):
         """Draws the board onto the screen, including moves that have been made.
         """
+        if not self.is_player_turn:
+            self.make_computer_turn()
+            self.is_player_turn = True
+
         self.window.blit(self.background, (0, 0))
         for space in self.board:
             if self.board[space]['value'] is not None:
@@ -100,20 +115,69 @@ class Game:
         """
         if not self.is_player_turn:
             print("Not your turn.")
-            return
         else:
             for space in self.board:
                 if self.board[space]['rect'].collidepoint(pos):
                     if self.board[space]['value'] is None:
                         self.board[space]['value'] = 'X'
                         self.is_player_turn = False
+                        if self.check_for_winner() == 'X':
+                            print("You win!")
                     else:
                         print("Space already taken.")
+
+    def make_winning_move(self):
+        """Check for a winning move for th computer player.
+        """
+        for line in self.winning_lines:
+            if self.board[self.winning_lines[line][0]]['value'] == 'O' and self.board[self.winning_lines[line][1]]['value'] == 'O' and self.board[self.winning_lines[line][2]]['value'] is None:
+                self.board[self.winning_lines[line][2]]['value'] = 'O'
+                return True
+        return False
+
+    def make_blocking_move(self):
+        """Check for a blocking move for the computer player.
+        """
+        for line in self.winning_lines:
+            if self.board[self.winning_lines[line][0]]['value'] == 'O' and self.board[self.winning_lines[line][1]]['value'] == 'O' and self.board[self.winning_lines[line][2]]['value'] is None:
+                self.board[self.winning_lines[line][2]]['value'] = 'O'
+                return True
+
+    def make_center_move(self):
+        """Check if center space is available.
+        """
+        if self.board[5]['value'] is None:
+            self.board[5]['value'] = 'O'
+            return True
+        return False
+
+    def make_random_move(self):
+        """Choose a random space.
+        """
+        for space in self.board:
+            if self.board[space]['value'] is None:
+                self.board[space]['value'] = 'O'
+                return True
+        return False
 
     def make_computer_turn(self):
         """Perform logic needed for the computer player to make a turn.
         """
-        pass  # TODO: Implement this.
+        if not self.make_winning_move():
+            if not self.make_blocking_move():
+                if not self.make_center_move():
+                    if not self.make_random_move():
+                        print("No moves left.")
+        if self.check_for_winner() == 'O':
+            print("Computer wins!")
+
+    def check_for_winner(self):
+        """Check if there is a winner.
+        """
+        for line in self.winning_lines:
+            if self.board[self.winning_lines[line][0]]['value'] == self.board[self.winning_lines[line][1]]['value'] == self.board[self.winning_lines[line][2]]['value']:
+                return self.board[self.winning_lines[line][0]]['value']
+        return None
 
 
 # Main Loop
