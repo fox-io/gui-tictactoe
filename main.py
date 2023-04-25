@@ -83,7 +83,7 @@ class Game:
         pygame.init()
         self.window = pygame.display.set_mode((200, 200))
         pygame.display.set_caption('Tic Tac Toe')
-        self.background = pygame.image.load('board.png')
+        self.background = pygame.image.load('assets/board.png')
         self.font = pygame.font.Font(None, 64)
 
         self.define_spaces()
