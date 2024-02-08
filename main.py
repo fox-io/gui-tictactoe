@@ -93,6 +93,15 @@ class Game:
     def on_update(self):
         """Draws the board onto the screen, including moves that have been made.
         """
+        if self.check_for_winner() is not None:
+            print("Game over.")
+            return False
+
+        # Check if there are no more moves left.
+        if all(self.board[space]['value'] is not None for space in self.board):
+            print("No moves left.")
+            return False
+
         if not self.is_player_turn:
             self.make_computer_turn()
             self.is_player_turn = True
@@ -105,6 +114,8 @@ class Game:
                 self.window.blit(self.board[space]['surface'], self.board[space]['rect'].move(19, 12))
 
         pygame.display.flip()
+
+        return True
 
     def on_click(self, pos):
         """Called when player clicks on a space.
@@ -139,7 +150,7 @@ class Game:
         """Check for a blocking move for the computer player.
         """
         for line in self.winning_lines:
-            if self.board[self.winning_lines[line][0]]['value'] == 'O' and self.board[self.winning_lines[line][1]]['value'] == 'O' and self.board[self.winning_lines[line][2]]['value'] is None:
+            if self.board[self.winning_lines[line][0]]['value'] == 'X' and self.board[self.winning_lines[line][1]]['value'] == 'X' and self.board[self.winning_lines[line][2]]['value'] is None:
                 self.board[self.winning_lines[line][2]]['value'] = 'O'
                 return True
 
@@ -193,4 +204,4 @@ while is_running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             game.on_click(pygame.mouse.get_pos())
 
-    game.on_update()
+    is_running = game.on_update()
